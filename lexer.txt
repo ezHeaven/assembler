@@ -1,0 +1,59 @@
+Program      = { Stmt } ;
+
+Stmt         = MintStmt 
+             | ShillStmt ;
+
+MintStmt     = "mint" IDENT "=" Expr ";" ;
+
+ShillStmt    = "shill" Expr ";" ;
+
+Expr         = Term { ("+" | "-") Term } ;
+
+Term         = Factor { ("*" | "/") Factor } ;
+
+Factor       = NUMBER 
+             | IDENT 
+             | IDENT "(" ArgList ")"   // вызов функции
+             | "(" Expr ")" ;
+
+ArgList      = Expr { "," Expr } ;
+
+
+
+mint btc = 50;
+mint eth = 25;
+mint total = swap(btc, eth);
+
+
+
+Program
+ │
+ ├── MintStmt
+ │    ├── "mint"
+ │    ├── IDENT("btc")
+ │    ├── "="
+ │    └── Expr → Term → Factor → NUMBER("50")
+ │    └── ";"
+ │
+ ├── MintStmt
+ │    ├── "mint"
+ │    ├── IDENT("eth")
+ │    ├── "="
+ │    └── Expr → Term → Factor → NUMBER("25")
+ │    └── ";"
+ │
+ └── MintStmt
+      ├── "mint"
+      ├── IDENT("total")
+      ├── "="
+      └── Expr
+           └── Term
+                └── Factor
+                     ├── IDENT("swap")        ← имя функции
+                     ├── "("
+                     ├── ArgList
+                     │    ├── Expr → IDENT("btc")
+                     │    ├── ","
+                     │    └── Expr → IDENT("eth")
+                     └── ")"
+      └── ";"
